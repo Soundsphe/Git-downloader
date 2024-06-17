@@ -52,7 +52,7 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     # Insert your Bot's token and desired port here
     token = '7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8'
-    port = 8443  # Replace with your desired port number
+    port = 1000  # Replace with your desired port number
     
     # Create the Application and pass it your bot's token and port
     application = Application.builder().token(token).port(port).build()
