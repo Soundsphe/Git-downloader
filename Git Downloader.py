@@ -51,7 +51,7 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     # Insert your Bot's token here
-    token = ('7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8')
+    token = ('')
     
     # Create the Application and pass it your bot's token
     application = Application.builder().token(token).build()
