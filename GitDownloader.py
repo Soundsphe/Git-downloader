@@ -1,3 +1,4 @@
+import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
@@ -23,12 +24,12 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
             f"[Click here to download ZIP file]({download_link})\n\n"
             f"👨‍💻 Developer: [Md. Shahriar Ahmed Shovon](https://t.me/FisherMan_Earn)"
         )
-        
+
         inline_keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("Download ZIP 📥", url=download_link)],
             [InlineKeyboardButton("Developer 👨‍💻", url="https://t.me/FisherMan_Earn")]
         ])
-        
+
         try:
             await context.bot.send_document(
                 chat_id=update.message.chat_id, 
@@ -45,21 +46,24 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
             )
     else:
         await update.message.reply_text("Please send a valid GitHub repository link.")
-    
+
     # Prompt for another link
     await update.message.reply_text("Send me another GitHub repository link, and I will provide you with a ZIP download link.")
 
 def main() -> None:
     # Insert your Bot's token here
-    token = ('7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8')
-    
-    # Create the Application and pass it your bot's token
-    application = Application.builder().token(token).build()
-    
+    token = '7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8'
+
+    # Read the PORT environment variable provided by Render
+    port = int(os.environ.get('PORT', 8443))
+
+    # Create the Application and pass it your bot's token and port
+    application = Application.builder().token(token).port(port).build()
+
     # Register the handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
+
     # Start the Bot
     application.run_polling()
 
