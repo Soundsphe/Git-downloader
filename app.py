@@ -1,4 +1,5 @@
 import logging
+import os
 from flask import Flask, request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
@@ -67,10 +68,6 @@ def webhook() -> str:
     return 'ok'
 
 if __name__ == '__main__':
-    # Set the webhook URL
-    webhook_url = f"https://GitDownloder.onrender.com/{token}"
-    application.bot.set_webhook(url=webhook_url)
-    
     # Run the Flask app
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
