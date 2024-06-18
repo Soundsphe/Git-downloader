@@ -1,4 +1,5 @@
 import logging
+from flask import Flask, request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 
@@ -8,6 +9,12 @@ logging.basicConfig(
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+# Set the token directly
+token = '7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8'
+application = Application.builder().token(token).build()
 
 # Define the start command handler
 async def start(update: Update, context: CallbackContext) -> None:
@@ -49,20 +56,21 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
     # Prompt for another link
     await update.message.reply_text("Send me another GitHub repository link, and I will provide you with a ZIP download link.")
 
-def main() -> None:
-    # Insert your Bot's token and desired port here
-    token = '7217822006:AAG69nqMhQ-UTyHFLOJ1zqxADC9UPq_mOV8'
-    port = 1000  # Replace with your desired port number
-    
-    # Create the Application and pass it your bot's token and port
-    application = Application.builder().token(token).port(port).build()
-    
-    # Register the handlers
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    # Start the Bot
-    application.run_polling()
+# Register the handlers
+application.add_handler(CommandHandler("start", start))
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+@app.route(f'/{token}', methods=['POST'])
+def webhook() -> str:
+    update = Update.de_json(request.get_json(force=True), application.bot)
+    application.update_queue.put(update)
+    return 'ok'
 
 if __name__ == '__main__':
-    main()
+    # Set the webhook URL
+    webhook_url = f"https://GitDownloder.onrender.com/{token}"
+    application.bot.set_webhook(url=webhook_url)
+    
+    # Run the Flask app
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
